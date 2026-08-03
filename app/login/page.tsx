@@ -6,49 +6,60 @@ import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const supabase = createClient();
+  const [loadingRole, setLoadingRole] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
+  const handleSwitch = async (role: string) => {
+    setLoadingRole(role);
     setError(null);
+    try {
+      // Clear existing session
+      await supabase.auth.signOut();
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+      let email = '';
+      let password = '';
+      let redirect = '';
 
-    if (error) {
-      setError(error.message);
-      setIsLoading(false);
-      return;
-    }
-
-    if (data?.user) {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', data.user.id)
-        .single();
-      
-      const role = profile?.role;
-      if (role === 'admin') {
-        router.push('/admin');
-      } else if (role === 'researcher') {
-        router.push('/researcher');
-      } else {
-        router.push('/dashboard');
+      switch (role) {
+        case 'therapist':
+          email = 'therapist@demo.com';
+          password = 'password1234';
+          redirect = '/dashboard';
+          break;
+        case 'researcher':
+          email = 'researcher@demo.com';
+          password = 'password123456';
+          redirect = '/researcher';
+          break;
+        case 'admin':
+          email = 'admin@demo.com';
+          password = 'Password12345';
+          redirect = '/admin';
+          break;
       }
-    } else {
-      router.push('/dashboard');
+
+      // Sign in with new credentials
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (signInError) {
+        console.error('Demo login error:', signInError.message);
+        setError('Failed to login: ' + signInError.message);
+      } else {
+        // Redirect and refresh server components
+        router.push(redirect);
+        router.refresh();
+      }
+    } catch (err) {
+      console.error(err);
+      setError('An unexpected error occurred.');
+    } finally {
+      setLoadingRole(null);
     }
-    
-    router.refresh();
   };
 
   return (
@@ -62,62 +73,65 @@ export default function LoginPage() {
             Sign in to Harbor
           </h2>
           <p className="mt-2 text-center text-sm text-stone-500">
-            Clinical Annotation Platform
+            Select a role to continue
           </p>
         </div>
         
-        <form className="mt-8 space-y-6" onSubmit={handleLogin}>
-          <div className="space-y-4 rounded-md shadow-sm">
-            <div>
-              <label htmlFor="email-address" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="email-address"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="relative block w-full rounded-md border-0 py-2.5 px-3 text-stone-900 ring-1 ring-inset ring-stone-300 placeholder:text-stone-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6"
-                placeholder="Email address"
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="relative block w-full rounded-md border-0 py-2.5 px-3 text-stone-900 ring-1 ring-inset ring-stone-300 placeholder:text-stone-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6"
-                placeholder="Password"
-              />
-            </div>
-          </div>
-
+        <div className="mt-8 flex flex-col gap-4">
           {error && (
-            <div className="text-sm text-red-600 text-center">
+            <div className="text-sm text-red-600 text-center mb-2">
               {error}
             </div>
           )}
-
-          <div>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="group relative flex w-full justify-center rounded-md bg-teal-600 px-3 py-2.5 text-sm font-semibold text-white hover:bg-teal-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600 transition-colors disabled:opacity-50"
-            >
-              {isLoading ? 'Signing in...' : 'Sign in'}
-            </button>
-          </div>
-        </form>
+          
+          <button
+            onClick={() => handleSwitch('therapist')}
+            disabled={loadingRole !== null}
+            className="flex items-center justify-center w-full px-6 py-3 rounded-md bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold transition-colors disabled:opacity-50"
+          >
+            {loadingRole === 'therapist' ? (
+              <>
+                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Signing in...
+              </>
+            ) : 'View as Therapist'}
+          </button>
+          
+          <button
+            onClick={() => handleSwitch('researcher')}
+            disabled={loadingRole !== null}
+            className="flex items-center justify-center w-full px-6 py-3 rounded-md bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold transition-colors disabled:opacity-50"
+          >
+            {loadingRole === 'researcher' ? (
+              <>
+                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Signing in...
+              </>
+            ) : 'View as Researcher'}
+          </button>
+          
+          <button
+            onClick={() => handleSwitch('admin')}
+            disabled={loadingRole !== null}
+            className="flex items-center justify-center w-full px-6 py-3 rounded-md bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold transition-colors disabled:opacity-50"
+          >
+            {loadingRole === 'admin' ? (
+              <>
+                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Signing in...
+              </>
+            ) : 'View as Admin'}
+          </button>
+        </div>
       </div>
     </div>
   );
