@@ -4,8 +4,8 @@ import { createClient } from '@/utils/supabase/server'
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
-  // next is the default fallback, but we dynamically route based on role
-  const next = searchParams.get('next') ?? '/'
+  // _next is the default fallback, but we dynamically route based on role
+  // const _next = searchParams.get('next') ?? '/'
 
   if (code) {
     const supabase = createClient()
