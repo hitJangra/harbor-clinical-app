@@ -3,6 +3,7 @@
 import { Header } from '@/components/Header';
 import { Download, Upload, Users, Activity, FileText, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
+import Link from 'next/link';
 
 interface ResearcherClientProps {
   userName: string;
@@ -95,8 +96,8 @@ export function ResearcherClient({ userName, userRole, metrics }: ResearcherClie
           </div>
 
           {/* Assignments Card */}
-          <div 
-            onClick={() => handleUpcomingFeature('sample assignment')}
+          <Link 
+            href="/researcher/therapists"
             className="flex flex-col rounded-xl bg-white p-6 shadow-sm border border-stone-200 hover:border-teal-500 hover:shadow-md transition-all cursor-pointer group"
           >
             <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-teal-50 text-teal-600 group-hover:bg-teal-600 group-hover:text-white transition-colors">
@@ -104,7 +105,7 @@ export function ResearcherClient({ userName, userRole, metrics }: ResearcherClie
             </div>
             <h3 className="text-lg font-medium text-stone-900">Manage Therapists</h3>
             <p className="mt-1 text-sm text-stone-500">Assign samples and track progress.</p>
-          </div>
+          </Link>
 
           {/* Export Card */}
           <div 
