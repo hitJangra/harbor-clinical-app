@@ -12,37 +12,17 @@ export default async function AnnotatePage({ params }: { params: { id: string } 
 
   const sampleId = params.id;
 
-  // Fetch assignment status and join with the sample data
-  const { data: assignment, error: assignmentError } = await supabase
-    .from('sample_assignments')
-    .select(`
-      status,
-      samples (
-        id,
-        source,
-        context,
-        gold_response
-      )
-    `)
-    .eq('sample_id', sampleId)
-    .eq('therapist_id', user.id)
+  // Fetch the sample directly
+  const { data: sampleData, error: sampleError } = await supabase
+    .from('samples')
+    .select('id, source, context, gold_response')
+    .eq('id', sampleId)
     .single();
 
-  if (!assignment || assignmentError) {
+  if (!sampleData || sampleError) {
     return (
       <div className="flex h-screen items-center justify-center bg-[#F8F9FA] text-stone-600">
-        Sample not found or you don&apos;t have access.
-      </div>
-    );
-  }
-
-  // Handle Supabase joining returning either an array or an object
-  const sampleData = Array.isArray(assignment.samples) ? assignment.samples[0] : assignment.samples;
-
-  if (!sampleData) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-[#F8F9FA] text-stone-600">
-        Sample details could not be loaded.
+        Sample not found.
       </div>
     );
   }
@@ -55,10 +35,12 @@ export default async function AnnotatePage({ params }: { params: { id: string } 
     .eq('therapist_id', user.id)
     .single();
 
+  const status = existingDraft?.status || 'not started';
+
   return (
     <AnnotateClient 
       sample={sampleData as { id: string; source: string; context: string; gold_response: string }} 
-      assignment={{ status: assignment.status }} 
+      assignment={{ status }} 
       existingDraft={existingDraft} 
     />
   );

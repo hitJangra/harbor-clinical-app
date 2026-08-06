@@ -47,6 +47,7 @@ export function AnnotateClient({ sample, assignment, existingDraft }: AnnotateCl
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const router = useRouter();
+  const isCompleted = assignment.status === 'completed';
 
   const {
     register,
@@ -149,6 +150,7 @@ export function AnnotateClient({ sample, assignment, existingDraft }: AnnotateCl
         {/* Right Panel: Questionnaire */}
         <div className="flex w-1/2 flex-col overflow-y-auto bg-white">
           <form id="annotation-form" onSubmit={handleSubmit(onSubmit)} className="flex-1 p-8 space-y-8">
+            <fieldset disabled={isCompleted} className="space-y-8 disabled:opacity-75 border-none p-0 m-0">
             
             {errorMsg && (
               <div className="p-4 bg-red-50 text-red-700 rounded-md text-sm mb-4">
@@ -382,7 +384,7 @@ export function AnnotateClient({ sample, assignment, existingDraft }: AnnotateCl
                 className="block w-full rounded-md border-0 py-2.5 px-3 text-stone-900 ring-1 ring-inset ring-stone-300 placeholder:text-stone-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6 shadow-sm"
               />
             </div>
-            
+            </fieldset>
           </form>
         </div>
       </main>
@@ -394,24 +396,26 @@ export function AnnotateClient({ sample, assignment, existingDraft }: AnnotateCl
             <ChevronLeft size={16} />
             <span>Dashboard</span>
           </Link>
-          <button 
-            type="button"
-            disabled={isSubmitting}
-            onClick={handleSaveDraft}
-            className="flex items-center space-x-2 rounded-md border border-stone-200 bg-white px-4 py-2 text-sm font-medium text-stone-700 shadow-sm hover:bg-stone-50 transition-colors disabled:opacity-50"
-          >
-            <Save size={16} />
-            <span>Save draft</span>
-          </button>
+          {!isCompleted && (
+            <button 
+              type="button"
+              disabled={isSubmitting}
+              onClick={handleSaveDraft}
+              className="flex items-center space-x-2 rounded-md border border-stone-200 bg-white px-4 py-2 text-sm font-medium text-stone-700 shadow-sm hover:bg-stone-50 transition-colors disabled:opacity-50"
+            >
+              <Save size={16} />
+              <span>Save draft</span>
+            </button>
+          )}
         </div>
         
         <button
           type="submit"
           form="annotation-form"
-          disabled={isSubmitting}
+          disabled={isSubmitting || isCompleted}
           className="flex items-center space-x-2 rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-500 disabled:opacity-50 transition-colors"
         >
-          <span>{isSubmitting ? "Saving..." : "Submit and finish"}</span>
+          <span>{isCompleted ? "Completed" : isSubmitting ? "Saving..." : "Submit and finish"}</span>
           <ChevronRight size={16} />
         </button>
       </footer>

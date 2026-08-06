@@ -1,4 +1,5 @@
 import { createClient } from '@/utils/supabase/server';
+import { createClient as createAdminClient } from '@supabase/supabase-js';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
@@ -31,6 +32,32 @@ export default async function TherapistsPage() {
     .eq('role', 'therapist')
     .order('full_name');
 
+  const safeTherapists = therapists || [];
+
+  // 3. Fetch auth users to get last_sign_in_at
+  let authUsers: { id: string; last_sign_in_at?: string }[] = [];
+  try {
+    const supabaseAdmin = createAdminClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+    const { data: { users }, error: usersError } = await supabaseAdmin.auth.admin.listUsers();
+    if (!usersError && users) {
+      authUsers = users as { id: string; last_sign_in_at?: string }[];
+    }
+  } catch (err) {
+    console.error('Failed to fetch auth users', err);
+  }
+
+  const authUserMap = new Map(authUsers.map(u => [u.id, u.last_sign_in_at]));
+
+  const mergedTherapists = safeTherapists.map(therapist => {
+    return {
+      ...therapist,
+      last_sign_in_at: authUserMap.get(therapist.id) || null
+    };
+  });
+
   return (
     <div className="min-h-screen bg-[#F8F9FA]">
       <Header userName={profile.full_name || ''} userRole={profile.role} />
@@ -47,13 +74,13 @@ export default async function TherapistsPage() {
         </div>
 
         <div className="mb-8">
-          <h1 className="text-2xl font-semibold text-stone-900">Manage Therapists</h1>
+          <h1 className="text-2xl font-semibold text-stone-900">Therapist Directory</h1>
           <p className="mt-1 text-sm text-stone-500">
-            View all registered therapists and assign samples to them.
+            View all registered therapists and their current status.
           </p>
         </div>
 
-        <TherapistTableClient therapists={therapists || []} />
+        <TherapistTableClient therapists={mergedTherapists} />
       </main>
     </div>
   );
