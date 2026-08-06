@@ -21,40 +21,40 @@ export function TherapistTableClient({ therapists }: TherapistTableClientProps) 
   };
 
   return (
-    <div className="overflow-hidden rounded-xl bg-white shadow-sm border border-stone-200">
-      <table className="min-w-full divide-y divide-stone-200">
-        <thead className="bg-stone-50">
+    <div className="overflow-hidden rounded-2xl bg-white/[0.03] backdrop-blur-2xl border border-white/[0.08] shadow-2xl">
+      <table className="min-w-full divide-y divide-white/5">
+        <thead className="bg-black/20">
           <tr>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-stone-500 uppercase tracking-wider">
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-neutral-400 uppercase tracking-wider">
               Name
             </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-stone-500 uppercase tracking-wider">
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-neutral-400 uppercase tracking-wider">
               ID
             </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-stone-500 uppercase tracking-wider">
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-neutral-400 uppercase tracking-wider">
               Status
             </th>
           </tr>
         </thead>
-        <tbody className="bg-white divide-y divide-stone-200">
+        <tbody className="bg-transparent divide-y divide-white/5">
           {therapists.map((therapist) => {
             const online = isOnline(therapist.last_sign_in_at);
             
             return (
-              <tr key={therapist.id} className="hover:bg-stone-50 transition-colors">
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-stone-900">
+              <tr key={therapist.id} className="hover:bg-white/5 transition-colors">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
                   {therapist.full_name || 'Unnamed Therapist'}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-stone-500 font-mono">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-400 font-mono">
                   {therapist.id}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                   {online ? (
-                    <span className="inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-800">
+                    <span className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-2.5 py-0.5 text-xs font-medium text-white">
                       Online/Live
                     </span>
                   ) : (
-                    <span className="inline-flex items-center rounded-full bg-stone-100 px-2.5 py-0.5 text-xs font-medium text-stone-800">
+                    <span className="inline-flex items-center rounded-full border border-white/10 bg-transparent px-2.5 py-0.5 text-xs font-medium text-neutral-500">
                       Offline
                     </span>
                   )}
@@ -64,7 +64,7 @@ export function TherapistTableClient({ therapists }: TherapistTableClientProps) 
           })}
           {therapists.length === 0 && (
             <tr>
-              <td colSpan={3} className="px-6 py-8 text-center text-sm text-stone-500">
+              <td colSpan={3} className="px-6 py-8 text-center text-sm text-neutral-500">
                 No therapists found.
               </td>
             </tr>

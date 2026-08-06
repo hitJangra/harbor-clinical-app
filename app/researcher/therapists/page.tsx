@@ -59,14 +59,14 @@ export default async function TherapistsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA]">
+    <div className="min-h-screen bg-transparent">
       <Header userName={profile.full_name || ''} userRole={profile.role} />
       
       <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-6">
           <Link 
             href="/researcher" 
-            className="inline-flex items-center text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors"
+            className="inline-flex items-center text-sm font-medium text-neutral-400 hover:text-white transition-colors"
           >
             <ChevronLeft size={16} className="mr-1" />
             Back to Dashboard
@@ -74,8 +74,8 @@ export default async function TherapistsPage() {
         </div>
 
         <div className="mb-8">
-          <h1 className="text-2xl font-semibold text-stone-900">Therapist Directory</h1>
-          <p className="mt-1 text-sm text-stone-500">
+          <h1 className="text-2xl font-bold tracking-tight text-white">Therapist Directory</h1>
+          <p className="mt-1 text-sm font-medium text-neutral-400">
             View all registered therapists and their current status.
           </p>
         </div>

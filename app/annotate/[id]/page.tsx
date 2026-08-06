@@ -30,7 +30,7 @@ export default async function AnnotatePage({ params }: { params: { id: string } 
 
   if (!sampleData || sampleError) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#F8F9FA] text-stone-600">
+      <div className="flex h-screen items-center justify-center bg-transparent text-neutral-400">
         Sample not found.
       </div>
     );

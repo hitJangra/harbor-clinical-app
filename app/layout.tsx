@@ -27,12 +27,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-50 text-slate-900 min-h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#09090b] text-neutral-400 min-h-screen overflow-x-hidden`}
       >
-        <div className="flex min-h-screen flex-col">
+        {/* Background depth shapes */}
+        <div className="pointer-events-none fixed top-1/4 left-1/4 h-96 w-96 rounded-full bg-white/5 blur-[120px] z-0"></div>
+        <div className="pointer-events-none fixed bottom-1/4 right-1/4 h-[500px] w-[500px] rounded-full bg-white/[0.03] blur-[150px] z-0"></div>
+
+        <div className="relative z-10 flex min-h-screen flex-col">
           {children}
         </div>
-        <Toaster position="bottom-right" />
+        <Toaster position="bottom-right" theme="dark" />
       </body>
     </html>
   );

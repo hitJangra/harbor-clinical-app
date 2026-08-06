@@ -100,36 +100,31 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Right Pane - Login Form */}
-      <div className="flex w-full lg:w-1/2 flex-col items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
-        <div className="w-full max-w-sm space-y-8">
-          <div className="flex flex-col items-start lg:hidden mb-8">
-            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-slate-900 text-white mb-4">
-              <ShieldCheck size={24} />
-            </div>
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900">
-              Harbor Research
-            </h2>
-          </div>
-          
+      {/* Right side - Login Form */}
+      <div className="relative flex w-full items-center justify-center p-8 sm:w-1/2 sm:p-12 bg-[#09090b]">
+        {/* Subtle blur behind the form */}
+        <div className="absolute pointer-events-none inset-0 flex items-center justify-center overflow-hidden">
+           <div className="h-[400px] w-[400px] rounded-full bg-white/5 blur-[100px]"></div>
+        </div>
+
+        <div className="relative z-10 w-full max-w-sm space-y-8 rounded-2xl bg-white/[0.03] backdrop-blur-2xl border border-white/[0.08] shadow-2xl p-8 sm:p-10">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900">
-              Researcher Login
-            </h2>
-            <p className="mt-2 text-sm text-slate-500">
-              Secure access for authorized lab personnel.
-            </p>
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white text-black mb-6">
+              <ShieldCheck size={28} />
+            </div>
+            <h2 className="text-3xl font-bold tracking-tight text-white">Sign in to Harbor</h2>
+            <p className="mt-2 text-sm text-neutral-400">Secure clinical annotation portal</p>
           </div>
-          
+
           {error && (
-            <div className="text-sm text-red-700 bg-red-50 p-3 rounded border border-red-200">
+            <div className="text-sm text-red-400 bg-red-400/10 p-3 rounded-lg border border-red-400/20 text-center">
               {error}
             </div>
           )}
-          
-          <form className="space-y-5" onSubmit={handleEmailLogin}>
+
+          <form className="space-y-6" onSubmit={handleEmailLogin}>
             <div>
-              <label className="block text-sm font-semibold text-slate-900" htmlFor="email">
+              <label htmlFor="email" className="block text-sm font-medium text-white">
                 Institutional Email
               </label>
               <input
@@ -138,13 +133,13 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1.5 block w-full rounded border border-slate-300 px-3 py-2 text-slate-900 placeholder-slate-400 focus:border-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-800 sm:text-sm"
+                className="mt-1.5 block w-full rounded-xl border border-white/10 bg-black/20 py-2.5 px-3 text-white placeholder:text-neutral-500 focus:border-white/30 focus:bg-white/[0.02] focus:outline-none focus:ring-0 sm:text-sm sm:leading-6 backdrop-blur-md transition-colors"
                 placeholder="researcher@mit.edu"
               />
             </div>
             
             <div>
-              <label className="block text-sm font-semibold text-slate-900" htmlFor="password">
+              <label className="block text-sm font-medium text-white" htmlFor="password">
                 Password
               </label>
               <input
@@ -153,7 +148,7 @@ export default function LoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-1.5 block w-full rounded border border-slate-300 px-3 py-2 text-slate-900 placeholder-slate-400 focus:border-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-800 sm:text-sm"
+                className="mt-1.5 block w-full rounded-xl border border-white/10 bg-black/20 py-2.5 px-3 text-white placeholder:text-neutral-500 focus:border-white/30 focus:bg-white/[0.02] focus:outline-none focus:ring-0 sm:text-sm sm:leading-6 backdrop-blur-md transition-colors"
                 placeholder="••••••••"
               />
             </div>
@@ -161,7 +156,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading || googleLoading}
-              className="mt-4 flex w-full justify-center rounded bg-slate-900 py-2.5 px-4 text-sm font-semibold text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2 disabled:opacity-50 transition-colors shadow-sm"
+              className="mt-4 flex w-full justify-center rounded-xl bg-white px-3 py-2.5 text-sm font-bold text-black shadow-sm hover:bg-neutral-200 transition-colors disabled:opacity-50"
             >
               {loading ? 'Authenticating...' : 'Sign In'}
             </button>

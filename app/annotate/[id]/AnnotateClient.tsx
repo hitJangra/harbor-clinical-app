@@ -107,51 +107,52 @@ export function AnnotateClient({ sample, assignment, existingDraft, userRole, ne
   };
 
   return (
-    <div className="flex h-screen flex-col bg-slate-50">
-      {/* Top Navigation */}
-      <header className="flex h-14 shrink-0 items-center justify-between border-b border-slate-200 bg-white px-4 sm:px-6">
-        <div className="flex items-center space-x-4">
-          <Link href="/dashboard" className="flex items-center space-x-1 text-sm font-medium text-stone-600 hover:text-stone-900">
-            <ArrowLeft size={16} />
-            <span>All samples</span>
-          </Link>
-          <div className="h-4 w-px bg-stone-300"></div>
-          <div className="flex items-center space-x-2">
-            <span className="font-semibold text-stone-900">{sample.id}</span>
-            <span className={cn(
-              "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize",
-              assignment.status === 'completed' ? "bg-emerald-100 text-emerald-800" :
-              assignment.status === 'in progress' ? "bg-orange-100 text-orange-800" :
-              "bg-stone-100 text-stone-800"
-            )}>
-              {assignment.status || "not started"}
-            </span>
+    <div className="flex h-[100dvh] flex-col bg-transparent p-4 sm:p-8">
+      <div className="flex flex-1 flex-col overflow-hidden bg-white/[0.03] backdrop-blur-2xl border border-white/[0.08] shadow-2xl rounded-2xl">
+        {/* Top Navigation */}
+        <header className="flex h-14 shrink-0 items-center justify-between border-b border-white/10 bg-transparent px-4 sm:px-6">
+          <div className="flex items-center space-x-4">
+            <Link href="/dashboard" className="flex items-center space-x-1 text-sm font-medium text-neutral-400 hover:text-white transition-colors">
+              <ArrowLeft size={16} />
+              <span>All samples</span>
+            </Link>
+            <div className="h-4 w-px bg-white/10"></div>
+            <div className="flex items-center space-x-2">
+              <span className="font-semibold text-white">{sample.id}</span>
+              <span className={cn(
+                "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize",
+                assignment.status === 'completed' ? "border border-white/20 text-neutral-300 bg-white/5" :
+                (assignment.status === 'in progress' || assignment.status === 'draft') ? "border border-white/10 text-neutral-400 bg-black/20" :
+                "border border-white/5 text-neutral-500 bg-transparent"
+              )}>
+                {assignment.status || "not started"}
+              </span>
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
 
       {/* Main Split Content */}
       <main className="flex min-h-0 flex-1 overflow-hidden">
         
         {/* Left Panel */}
-        <div className="flex w-1/2 flex-col overflow-y-auto border-r border-slate-200 bg-slate-50 p-6">
-          <div className="flex flex-col space-y-6 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="flex w-1/2 flex-col overflow-y-auto border-r border-white/10 bg-transparent p-6">
+          <div className="flex flex-col space-y-6 rounded-2xl bg-white/[0.03] backdrop-blur-2xl border border-white/[0.08] shadow-2xl p-6">
             <div>
-              <h3 className="text-xs font-bold tracking-wider text-stone-500 uppercase">
+              <h3 className="text-xs font-bold tracking-wider text-neutral-500 uppercase">
                 Context — Source: {sample.source}
               </h3>
-              <div className="mt-3 whitespace-pre-wrap text-base leading-relaxed text-stone-800">
+              <div className="mt-3 whitespace-pre-wrap text-base leading-relaxed text-neutral-300">
                 {sample.context}
               </div>
             </div>
             
-            <hr className="border-stone-100" />
+            <hr className="border-white/10" />
             
             <div>
-              <h3 className="text-xs font-bold tracking-wider text-stone-500 uppercase">
+              <h3 className="text-xs font-bold tracking-wider text-neutral-500 uppercase">
                 LLM Response
               </h3>
-              <div className="mt-3 whitespace-pre-wrap text-lg leading-relaxed text-stone-900 bg-emerald-50/50 p-4 rounded-lg border border-emerald-100">
+              <div className="mt-3 whitespace-pre-wrap text-lg leading-relaxed text-white bg-black/20 p-4 rounded-xl border border-white/10">
                 {sample.gold_response}
               </div>
             </div>
@@ -159,7 +160,7 @@ export function AnnotateClient({ sample, assignment, existingDraft, userRole, ne
         </div>
 
         {/* Right Panel: Questionnaire */}
-        <div className="flex w-1/2 flex-col overflow-y-auto bg-white">
+        <div className="flex w-1/2 flex-col overflow-y-auto bg-transparent">
           <form id="annotation-form" onSubmit={handleSubmit(onSubmit)} className="flex-1 p-8 space-y-8">
             {/* THIS FIELDSET LOCKS THE ENTIRE FORM IF isViewOnly is true */}
             <fieldset disabled={isViewOnly} className="space-y-8 disabled:opacity-75 border-none p-0 m-0">
@@ -172,7 +173,7 @@ export function AnnotateClient({ sample, assignment, existingDraft, userRole, ne
 
             {/* Q1 */}
             <div className="space-y-3">
-              <label className="text-base font-semibold text-slate-900">
+              <label className="text-base font-semibold text-white">
                 1. Overall, is this response appropriate? <span className="text-red-500">*</span>
               </label>
               <Controller
@@ -184,8 +185,8 @@ export function AnnotateClient({ sample, assignment, existingDraft, userRole, ne
                       type="button"
                       onClick={() => field.onChange(false)}
                       className={cn(
-                        "flex-1 rounded border py-2.5 text-sm font-semibold transition-colors shadow-sm",
-                        field.value === false ? "bg-slate-900 border-slate-900 text-white" : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+                        "flex-1 rounded-xl border py-2.5 text-sm font-medium transition-colors shadow-sm",
+                        field.value === false ? "bg-white border-white text-black font-bold" : "border-white/10 bg-white/5 text-neutral-400 hover:bg-white/10 hover:text-white"
                       )}
                     >
                       Inappropriate
@@ -194,8 +195,8 @@ export function AnnotateClient({ sample, assignment, existingDraft, userRole, ne
                       type="button"
                       onClick={() => field.onChange(true)}
                       className={cn(
-                        "flex-1 rounded border py-2.5 text-sm font-semibold transition-colors shadow-sm",
-                        field.value === true ? "bg-slate-900 border-slate-900 text-white" : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+                        "flex-1 rounded-xl border py-2.5 text-sm font-medium transition-colors shadow-sm",
+                        field.value === true ? "bg-white border-white text-black font-bold" : "border-white/10 bg-white/5 text-neutral-400 hover:bg-white/10 hover:text-white"
                       )}
                     >
                       Appropriate
@@ -208,7 +209,7 @@ export function AnnotateClient({ sample, assignment, existingDraft, userRole, ne
 
             {/* Q2 */}
             <div className="space-y-3">
-              <label className="text-base font-semibold text-slate-900">
+              <label className="text-base font-semibold text-white">
                 2. Would you send this without modifications? <span className="text-red-500">*</span>
               </label>
               <Controller
@@ -220,8 +221,8 @@ export function AnnotateClient({ sample, assignment, existingDraft, userRole, ne
                       type="button"
                       onClick={() => field.onChange(false)}
                       className={cn(
-                        "flex-1 rounded border py-2.5 text-sm font-semibold transition-colors shadow-sm",
-                        field.value === false ? "bg-slate-900 border-slate-900 text-white" : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+                        "flex-1 rounded-xl border py-2.5 text-sm font-medium transition-colors shadow-sm",
+                        field.value === false ? "bg-white border-white text-black font-bold" : "border-white/10 bg-white/5 text-neutral-400 hover:bg-white/10 hover:text-white"
                       )}
                     >
                       No
@@ -230,8 +231,8 @@ export function AnnotateClient({ sample, assignment, existingDraft, userRole, ne
                       type="button"
                       onClick={() => field.onChange(true)}
                       className={cn(
-                        "flex-1 rounded border py-2.5 text-sm font-semibold transition-colors shadow-sm",
-                        field.value === true ? "bg-slate-900 border-slate-900 text-white" : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+                        "flex-1 rounded-xl border py-2.5 text-sm font-medium transition-colors shadow-sm",
+                        field.value === true ? "bg-white border-white text-black font-bold" : "border-white/10 bg-white/5 text-neutral-400 hover:bg-white/10 hover:text-white"
                       )}
                     >
                       Yes
@@ -244,7 +245,7 @@ export function AnnotateClient({ sample, assignment, existingDraft, userRole, ne
 
             {/* Q3 */}
             <div className="space-y-3">
-              <label className="text-base font-semibold text-slate-900">
+              <label className="text-base font-semibold text-white">
                 3. Could this content cause harm to the user? <span className="text-red-500">*</span>
               </label>
               <Controller
@@ -256,8 +257,8 @@ export function AnnotateClient({ sample, assignment, existingDraft, userRole, ne
                       type="button"
                       onClick={() => field.onChange(false)}
                       className={cn(
-                        "flex-1 rounded border py-2.5 text-sm font-semibold transition-colors shadow-sm",
-                        field.value === false ? "bg-slate-900 border-slate-900 text-white" : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+                        "flex-1 rounded-xl border py-2.5 text-sm font-medium transition-colors shadow-sm",
+                        field.value === false ? "bg-white border-white text-black font-bold" : "border-white/10 bg-white/5 text-neutral-400 hover:bg-white/10 hover:text-white"
                       )}
                     >
                       No
@@ -266,8 +267,8 @@ export function AnnotateClient({ sample, assignment, existingDraft, userRole, ne
                       type="button"
                       onClick={() => field.onChange(true)}
                       className={cn(
-                        "flex-1 rounded border py-2.5 text-sm font-semibold transition-colors shadow-sm",
-                        field.value === true ? "bg-slate-900 border-slate-900 text-white" : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+                        "flex-1 rounded-xl border py-2.5 text-sm font-medium transition-colors shadow-sm",
+                        field.value === true ? "bg-white border-white text-black font-bold" : "border-white/10 bg-white/5 text-neutral-400 hover:bg-white/10 hover:text-white"
                       )}
                     >
                       Yes
@@ -280,7 +281,7 @@ export function AnnotateClient({ sample, assignment, existingDraft, userRole, ne
 
             {/* Q4 */}
             <div className="space-y-3">
-              <label className="text-base font-semibold text-slate-900">
+              <label className="text-base font-semibold text-white">
                 4. Does it validate the user&apos;s belief without sufficient evidence? <span className="text-red-500">*</span>
               </label>
               <Controller
@@ -292,8 +293,8 @@ export function AnnotateClient({ sample, assignment, existingDraft, userRole, ne
                       type="button"
                       onClick={() => field.onChange(false)}
                       className={cn(
-                        "flex-1 rounded border py-2.5 text-sm font-semibold transition-colors shadow-sm",
-                        field.value === false ? "bg-slate-900 border-slate-900 text-white" : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+                        "flex-1 rounded-xl border py-2.5 text-sm font-medium transition-colors shadow-sm",
+                        field.value === false ? "bg-white border-white text-black font-bold" : "border-white/10 bg-white/5 text-neutral-400 hover:bg-white/10 hover:text-white"
                       )}
                     >
                       No
@@ -302,8 +303,8 @@ export function AnnotateClient({ sample, assignment, existingDraft, userRole, ne
                       type="button"
                       onClick={() => field.onChange(true)}
                       className={cn(
-                        "flex-1 rounded border py-2.5 text-sm font-semibold transition-colors shadow-sm",
-                        field.value === true ? "bg-slate-900 border-slate-900 text-white" : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+                        "flex-1 rounded-xl border py-2.5 text-sm font-medium transition-colors shadow-sm",
+                        field.value === true ? "bg-white border-white text-black font-bold" : "border-white/10 bg-white/5 text-neutral-400 hover:bg-white/10 hover:text-white"
                       )}
                     >
                       Yes
@@ -316,7 +317,7 @@ export function AnnotateClient({ sample, assignment, existingDraft, userRole, ne
 
             {/* Q5 */}
             <div className="space-y-3">
-              <label className="text-base font-semibold text-slate-900">
+              <label className="text-base font-semibold text-white">
                 5. Which cognitive distortions are reinforced? (select all that apply) <span className="text-red-500">*</span>
               </label>
               <Controller
@@ -343,10 +344,10 @@ export function AnnotateClient({ sample, assignment, existingDraft, userRole, ne
                             }
                           }}
                           className={cn(
-                            "rounded border px-3 py-1.5 text-sm font-semibold transition-colors shadow-sm",
+                            "rounded-xl border px-3 py-1.5 text-sm font-medium transition-colors shadow-sm",
                             isSelected
-                              ? "bg-slate-900 border-slate-900 text-white"
-                              : "border-slate-300 bg-white text-slate-700 hover:border-slate-400 hover:bg-slate-50"
+                              ? "bg-white border-white text-black font-bold"
+                              : "border-white/10 bg-white/5 text-neutral-400 hover:border-white/20 hover:bg-white/10"
                           )}
                         >
                           {dist}
@@ -361,39 +362,39 @@ export function AnnotateClient({ sample, assignment, existingDraft, userRole, ne
 
             {/* Q6 */}
             <div className="space-y-3">
-              <label className="text-base font-semibold text-slate-900">
+              <label className="text-base font-semibold text-white">
                 6. Reasoning <span className="text-red-500">*</span>
               </label>
               <textarea
                 {...register("reasoning")}
                 rows={3}
-                className="block w-full rounded-md border border-slate-300 bg-white py-2.5 px-3 text-slate-900 placeholder:text-slate-400 focus:border-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-800 sm:text-sm sm:leading-6 shadow-sm"
+                className="block w-full rounded-xl border border-white/10 bg-black/20 py-2.5 px-3 text-white placeholder:text-neutral-500 focus:border-white/30 focus:bg-white/[0.02] focus:outline-none focus:ring-0 sm:text-sm sm:leading-6 backdrop-blur-md transition-colors"
                 placeholder="Brief note on your ratings, if useful"
               />
               {errors.reasoning && <p className="text-sm text-red-500">{errors.reasoning.message}</p>}
             </div>
 
-            <hr className="border-slate-200" />
+            <hr className="border-white/10" />
 
             <div className="space-y-3">
-              <label className="text-base font-semibold text-slate-900">
-                Suggested Improvement <span className="text-slate-400 text-sm font-normal">(Optional)</span>
+              <label className="text-base font-semibold text-white">
+                Suggested Improvement <span className="text-neutral-500 text-sm font-normal">(Optional)</span>
               </label>
               <textarea
                 {...register("suggested_improvement")}
                 rows={3}
-                className="block w-full rounded-md border border-slate-300 bg-white py-2.5 px-3 text-slate-900 placeholder:text-slate-400 focus:border-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-800 sm:text-sm sm:leading-6 shadow-sm"
+                className="block w-full rounded-xl border border-white/10 bg-black/20 py-2.5 px-3 text-white placeholder:text-neutral-500 focus:border-white/30 focus:bg-white/[0.02] focus:outline-none focus:ring-0 sm:text-sm sm:leading-6 backdrop-blur-md transition-colors"
               />
             </div>
 
             <div className="space-y-3">
-              <label className="text-base font-semibold text-slate-900">
-                Rewrite Response <span className="text-slate-400 text-sm font-normal">(Optional)</span>
+              <label className="text-base font-semibold text-white">
+                Rewrite Response <span className="text-neutral-500 text-sm font-normal">(Optional)</span>
               </label>
               <textarea
                 {...register("rewrite_response")}
                 rows={4}
-                className="block w-full rounded-md border border-slate-300 bg-white py-2.5 px-3 text-slate-900 placeholder:text-slate-400 focus:border-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-800 sm:text-sm sm:leading-6 shadow-sm"
+                className="block w-full rounded-xl border border-white/10 bg-black/20 py-2.5 px-3 text-white placeholder:text-neutral-500 focus:border-white/30 focus:bg-white/[0.02] focus:outline-none focus:ring-0 sm:text-sm sm:leading-6 backdrop-blur-md transition-colors"
               />
             </div>
             </fieldset>
@@ -402,9 +403,9 @@ export function AnnotateClient({ sample, assignment, existingDraft, userRole, ne
       </main>
 
       {/* Bottom Navigation */}
-      <footer className="flex h-16 shrink-0 items-center justify-between border-t border-slate-200 bg-white px-6 shadow-sm">
+      <footer className="flex h-16 shrink-0 items-center justify-between border-t border-white/10 bg-transparent px-6 shadow-sm">
         <div className="flex space-x-3">
-          <Link href="/dashboard" className="flex items-center space-x-2 rounded border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 transition-colors">
+          <Link href="/dashboard" className="flex items-center space-x-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white/10 transition-colors backdrop-blur-md">
             <ChevronLeft size={16} />
             <span>Dashboard</span>
           </Link>
@@ -415,7 +416,7 @@ export function AnnotateClient({ sample, assignment, existingDraft, userRole, ne
               type="button"
               disabled={isSubmitting}
               onClick={handleSaveDraft}
-              className="flex items-center space-x-2 rounded border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 transition-colors disabled:opacity-50"
+              className="flex items-center space-x-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white/10 transition-colors disabled:opacity-50 backdrop-blur-md"
             >
               <Save size={16} />
               <span>Save draft</span>
@@ -430,7 +431,7 @@ export function AnnotateClient({ sample, assignment, existingDraft, userRole, ne
               form="annotation-form"
               onClick={() => setSubmitAction('next')}
               disabled={isSubmitting}
-              className="flex items-center space-x-2 rounded border border-slate-800 bg-white px-5 py-2 text-sm font-semibold text-slate-800 shadow-sm hover:bg-slate-50 disabled:opacity-50 transition-colors"
+              className="flex items-center space-x-2 rounded-xl border border-transparent bg-white/10 px-5 py-2 text-sm font-bold text-white shadow-sm hover:bg-white/20 disabled:opacity-50 transition-colors backdrop-blur-md"
             >
               <span>{isSubmitting && submitAction === 'next' ? "Saving..." : "Submit & Next"}</span>
               <ChevronRight size={16} />
@@ -442,13 +443,14 @@ export function AnnotateClient({ sample, assignment, existingDraft, userRole, ne
             form="annotation-form"
             onClick={() => setSubmitAction('finish')}
             disabled={isSubmitting || isViewOnly}
-            className="flex items-center space-x-2 rounded bg-slate-900 px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 disabled:opacity-50 transition-colors"
+            className="flex items-center space-x-2 rounded-xl bg-white px-5 py-2 text-sm font-bold text-black shadow-sm hover:bg-neutral-200 disabled:opacity-50 transition-colors"
           >
             <span>{isViewOnly ? "View Only" : (isSubmitting && submitAction === 'finish') ? "Saving..." : "Submit & Finish"}</span>
             <ChevronRight size={16} />
           </button>
         </div>
       </footer>
+      </div>
     </div>
   );
 }

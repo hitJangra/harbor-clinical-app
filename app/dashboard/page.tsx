@@ -53,14 +53,14 @@ export default async function DashboardPage() {
   const userRole = profile?.role || 'Therapist';
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-transparent">
       <Header userName={userName} userRole={userRole} />
       
       <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900">Good afternoon, {userName.split(' ')[0]}</h1>
-            <p className="mt-1 text-sm font-medium text-slate-500">Shared task pool</p>
+            <h1 className="text-2xl font-bold tracking-tight text-white">Good afternoon, {userName.split(' ')[0]}</h1>
+            <p className="mt-1 text-sm font-medium text-neutral-400">Shared task pool</p>
           </div>
           <div>
             <RequestAccessButton />
@@ -69,46 +69,46 @@ export default async function DashboardPage() {
 
         {/* Summary Metric Cards */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-8">
-          <div className="overflow-hidden rounded-xl bg-white px-6 py-5 shadow-sm border border-slate-200">
-            <dt className="truncate text-sm font-semibold text-slate-500">Total Samples</dt>
-            <dd className="mt-2 text-3xl font-bold tracking-tight text-slate-900">{totalSamples}</dd>
+          <div className="overflow-hidden rounded-2xl bg-white/[0.03] backdrop-blur-2xl border border-white/[0.08] shadow-2xl px-6 py-5">
+            <dt className="truncate text-sm font-semibold text-neutral-400">Total Samples</dt>
+            <dd className="mt-2 text-3xl font-bold tracking-tight text-white">{totalSamples}</dd>
           </div>
-          <div className="overflow-hidden rounded-xl bg-white px-6 py-5 shadow-sm border border-slate-200">
-            <dt className="truncate text-sm font-semibold text-slate-500">Global Completed</dt>
-            <dd className="mt-2 text-3xl font-bold tracking-tight text-emerald-600">{completedCount}</dd>
+          <div className="overflow-hidden rounded-2xl bg-white/[0.03] backdrop-blur-2xl border border-white/[0.08] shadow-2xl px-6 py-5">
+            <dt className="truncate text-sm font-semibold text-neutral-400">Global Completed</dt>
+            <dd className="mt-2 text-3xl font-bold tracking-tight text-white">{completedCount}</dd>
           </div>
-          <div className="overflow-hidden rounded-xl bg-white px-6 py-5 shadow-sm border border-slate-200">
-            <dt className="truncate text-sm font-semibold text-slate-500">Global Remaining</dt>
-            <dd className="mt-2 text-3xl font-bold tracking-tight text-slate-900">{remainingCount}</dd>
+          <div className="overflow-hidden rounded-2xl bg-white/[0.03] backdrop-blur-2xl border border-white/[0.08] shadow-2xl px-6 py-5">
+            <dt className="truncate text-sm font-semibold text-neutral-400">Global Remaining</dt>
+            <dd className="mt-2 text-3xl font-bold tracking-tight text-white">{remainingCount}</dd>
           </div>
         </div>
 
         {/* Sample List Table */}
-        <div className="overflow-hidden rounded-xl bg-white shadow-sm border border-slate-200">
-          <ul role="list" className="divide-y divide-stone-200">
+        <div className="overflow-hidden rounded-2xl bg-white/[0.03] backdrop-blur-2xl border border-white/[0.08] shadow-2xl">
+          <ul role="list" className="divide-y divide-white/5">
             {safeSamples.length === 0 ? (
-              <li className="px-6 py-8 text-center text-stone-500 text-sm">No samples available in the pool yet.</li>
+              <li className="px-6 py-8 text-center text-neutral-500 text-sm">No samples available in the pool yet.</li>
             ) : (
               safeSamples.map((sample) => {
                 const status = annotationMap.get(sample.id) || 'not started';
                 const isCompleted = status === 'completed';
                 const statusColor = isCompleted
-                  ? 'bg-emerald-50 text-emerald-700'
+                  ? 'border border-white/20 text-neutral-300 bg-white/5'
                   : status === 'draft'
-                  ? 'bg-amber-50 text-amber-700'
-                  : 'bg-slate-100 text-slate-700';
+                  ? 'border border-white/10 text-neutral-400 bg-black/20'
+                  : 'border border-white/5 text-neutral-500 bg-transparent';
 
                 return (
-                  <li key={sample.id} className={`flex items-center justify-between px-6 py-4 transition-colors ${isCompleted ? 'bg-slate-50 opacity-75' : 'hover:bg-slate-50'}`}>
+                  <li key={sample.id} className={`flex items-center justify-between px-6 py-4 transition-all duration-300 ${isCompleted ? 'bg-black/20 opacity-75' : 'hover:bg-white/[0.06]'}`}>
                     <div className="flex items-center space-x-4">
-                      <span className="text-sm font-medium text-stone-900">{sample.id}</span>
+                      <span className="text-sm font-medium text-white">{sample.id}</span>
                       <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${statusColor}`}>
-                        {status === 'draft' ? 'in progress' : status}
+                        {status}
                       </span>
                     </div>
                     <Link
                       href={`/annotate/${sample.id}`}
-                      className="flex items-center space-x-1 text-sm font-semibold text-slate-900 hover:text-slate-600 transition-colors"
+                      className="flex items-center space-x-1 text-sm font-semibold text-neutral-300 hover:text-white transition-colors"
                     >
                       <span>{isCompleted ? 'View Only' : 'Open'}</span>
                       <ChevronRight size={16} />
