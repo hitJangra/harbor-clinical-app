@@ -22,7 +22,7 @@ export function RequestAccessButton() {
     <button
       onClick={handleRequest}
       disabled={isPending}
-      className="inline-flex items-center rounded-md bg-teal-50 px-3 py-2 text-sm font-semibold text-teal-700 shadow-sm hover:bg-teal-100 border border-teal-200 transition-colors disabled:opacity-50"
+      className="inline-flex items-center rounded bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 transition-colors disabled:opacity-50"
     >
       {isPending ? 'Requesting...' : 'Request Researcher Access'}
     </button>

@@ -78,31 +78,59 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-[#F8F9FA] px-4 py-12 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8 rounded-xl bg-white p-10 shadow-sm border border-stone-200">
-        <div className="flex flex-col items-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-teal-600 text-white">
-            <ShieldCheck size={32} />
+    <div className="flex min-h-screen bg-slate-50">
+      {/* Left Pane - Neural/AI Theme Image */}
+      <div className="hidden lg:flex lg:w-1/2 relative bg-slate-900 items-center justify-center overflow-hidden">
+        {/* Placeholder Unsplash neural network image */}
+        <div 
+          className="absolute inset-0 opacity-40 bg-cover bg-center"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=2565&auto=format&fit=crop')" }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-transparent" />
+        <div className="relative z-10 max-w-lg px-12 text-left">
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-white/10 backdrop-blur-md text-white mb-6 border border-white/20">
+            <ShieldCheck size={28} />
           </div>
-          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-stone-900">
-            Sign in to Harbor
-          </h2>
-          <p className="mt-2 text-center text-sm text-stone-500">
-            Welcome back to the clinical portal
+          <h1 className="text-4xl font-semibold tracking-tight text-white mb-4">
+            Evaluating Sycophancy in Large Language Models
+          </h1>
+          <p className="text-lg text-slate-300 font-medium">
+            Clinical Annotation Portal for Academic Research
           </p>
         </div>
-        
-        <div className="mt-8">
+      </div>
+
+      {/* Right Pane - Login Form */}
+      <div className="flex w-full lg:w-1/2 flex-col items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+        <div className="w-full max-w-sm space-y-8">
+          <div className="flex flex-col items-start lg:hidden mb-8">
+            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-slate-900 text-white mb-4">
+              <ShieldCheck size={24} />
+            </div>
+            <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+              Harbor Research
+            </h2>
+          </div>
+          
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+              Researcher Login
+            </h2>
+            <p className="mt-2 text-sm text-slate-500">
+              Secure access for authorized lab personnel.
+            </p>
+          </div>
+          
           {error && (
-            <div className="text-sm text-red-600 text-center mb-4 p-2 bg-red-50 rounded-md border border-red-100">
+            <div className="text-sm text-red-700 bg-red-50 p-3 rounded border border-red-200">
               {error}
             </div>
           )}
           
-          <form className="space-y-4" onSubmit={handleEmailLogin}>
+          <form className="space-y-5" onSubmit={handleEmailLogin}>
             <div>
-              <label className="block text-sm font-medium text-stone-700" htmlFor="email">
-                Email Address
+              <label className="block text-sm font-semibold text-slate-900" htmlFor="email">
+                Institutional Email
               </label>
               <input
                 id="email"
@@ -110,13 +138,13 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full rounded-md border border-stone-300 px-3 py-2 text-stone-900 placeholder-stone-400 focus:border-teal-500 focus:outline-none focus:ring-teal-500 sm:text-sm"
-                placeholder="you@demo.com"
+                className="mt-1.5 block w-full rounded border border-slate-300 px-3 py-2 text-slate-900 placeholder-slate-400 focus:border-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-800 sm:text-sm"
+                placeholder="researcher@mit.edu"
               />
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-stone-700" htmlFor="password">
+              <label className="block text-sm font-semibold text-slate-900" htmlFor="password">
                 Password
               </label>
               <input
@@ -125,7 +153,7 @@ export default function LoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 block w-full rounded-md border border-stone-300 px-3 py-2 text-stone-900 placeholder-stone-400 focus:border-teal-500 focus:outline-none focus:ring-teal-500 sm:text-sm"
+                className="mt-1.5 block w-full rounded border border-slate-300 px-3 py-2 text-slate-900 placeholder-slate-400 focus:border-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-800 sm:text-sm"
                 placeholder="••••••••"
               />
             </div>
@@ -133,19 +161,19 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading || googleLoading}
-              className="mt-2 flex w-full justify-center rounded-md border border-transparent bg-teal-600 py-2.5 px-4 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:opacity-50 transition-colors"
+              className="mt-4 flex w-full justify-center rounded bg-slate-900 py-2.5 px-4 text-sm font-semibold text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2 disabled:opacity-50 transition-colors shadow-sm"
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? 'Authenticating...' : 'Sign In'}
             </button>
           </form>
 
-          <div className="mt-6">
+          <div className="mt-8">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-stone-300" />
+                <div className="w-full border-t border-slate-200" />
               </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="bg-white px-2 text-stone-500">OR</span>
+              <div className="relative flex justify-center text-xs uppercase tracking-widest font-semibold">
+                <span className="bg-slate-50 px-3 text-slate-400">External Provider</span>
               </div>
             </div>
 
@@ -154,7 +182,7 @@ export default function LoginPage() {
                 onClick={handleGoogleLogin}
                 type="button"
                 disabled={loading || googleLoading}
-                className="flex w-full items-center justify-center gap-3 rounded-md border border-stone-300 bg-white py-2.5 px-4 text-sm font-medium text-stone-700 shadow-sm hover:bg-stone-50 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:opacity-50 transition-colors"
+                className="flex w-full items-center justify-center gap-3 rounded border border-slate-300 bg-white py-2.5 px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2 disabled:opacity-50 transition-colors shadow-sm"
               >
                 <svg className="h-5 w-5" viewBox="0 0 24 24">
                   <path

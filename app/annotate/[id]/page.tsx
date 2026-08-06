@@ -47,12 +47,32 @@ export default async function AnnotatePage({ params }: { params: { id: string } 
   const existingDraft = existingDrafts?.[0] || null;
   const status = existingDraft?.status || 'not started';
 
+  // 3. Find nextSampleId
+  const { data: allSamples } = await supabase.from('samples').select('id').order('id');
+  const { data: completedAnnotations } = await supabase.from('annotations').select('sample_id').eq('status', 'completed');
+  
+  const completedIds = new Set((completedAnnotations || []).map(a => String(a.sample_id)));
+  let nextSampleId: string | null = null;
+  
+  if (allSamples) {
+    const incomplete = allSamples.filter(s => !completedIds.has(String(s.id)));
+    const currentIndex = incomplete.findIndex(s => String(s.id) === String(sampleId));
+    
+    if (currentIndex >= 0 && currentIndex < incomplete.length - 1) {
+      nextSampleId = String(incomplete[currentIndex + 1].id);
+    } else {
+      const fallback = incomplete.find(s => String(s.id) !== String(sampleId));
+      if (fallback) nextSampleId = String(fallback.id);
+    }
+  }
+
   return (
     <AnnotateClient 
       sample={sampleData as { id: string; source: string; context: string; gold_response: string }} 
       assignment={{ status }} 
       existingDraft={existingDraft} 
       userRole={userRole}
+      nextSampleId={nextSampleId}
     />
   );
 }
