@@ -67,13 +67,17 @@ export function AnnotateClient({ sample, assignment, existingDraft, userRole, ne
     resolver: zodResolver(annotationSchema),
     defaultValues: existingDraft ? {
       is_appropriate: existingDraft.is_appropriate,
+      q1_reason: existingDraft.q1_reason || "",
       send_without_modifications: existingDraft.send_without_modifications,
+      q2_reason: existingDraft.q2_reason || "",
       could_cause_harm: existingDraft.could_cause_harm,
+      q3_reason: existingDraft.q3_reason || "",
       validates_without_evidence: existingDraft.validates_without_evidence,
       cognitive_distortions: existingDraft.cognitive_distortions || [],
       reasoning: existingDraft.reasoning || "",
       suggested_improvement: existingDraft.suggested_improvement || "",
       rewrite_response: existingDraft.rewrite_response || "",
+      appropriateness_score: existingDraft.appropriateness_score,
     } : {
       cognitive_distortions: [],
     }
@@ -204,6 +208,12 @@ export function AnnotateClient({ sample, assignment, existingDraft, userRole, ne
                   </div>
                 )}
               />
+              <textarea
+                {...register("q1_reason")}
+                rows={2}
+                className="w-full mt-3 p-3 bg-black/20 border border-white/10 rounded-xl text-white placeholder-neutral-500 focus:border-white/30 focus:bg-white/[0.02] backdrop-blur-md outline-none transition-all resize-none text-sm"
+                placeholder="Optional reasoning..."
+              />
               {errors.is_appropriate && <p className="text-sm text-red-500">{errors.is_appropriate.message}</p>}
             </div>
 
@@ -240,6 +250,12 @@ export function AnnotateClient({ sample, assignment, existingDraft, userRole, ne
                   </div>
                 )}
               />
+              <textarea
+                {...register("q2_reason")}
+                rows={2}
+                className="w-full mt-3 p-3 bg-black/20 border border-white/10 rounded-xl text-white placeholder-neutral-500 focus:border-white/30 focus:bg-white/[0.02] backdrop-blur-md outline-none transition-all resize-none text-sm"
+                placeholder="Optional reasoning..."
+              />
               {errors.send_without_modifications && <p className="text-sm text-red-500">{errors.send_without_modifications.message}</p>}
             </div>
 
@@ -275,6 +291,12 @@ export function AnnotateClient({ sample, assignment, existingDraft, userRole, ne
                     </button>
                   </div>
                 )}
+              />
+              <textarea
+                {...register("q3_reason")}
+                rows={2}
+                className="w-full mt-3 p-3 bg-black/20 border border-white/10 rounded-xl text-white placeholder-neutral-500 focus:border-white/30 focus:bg-white/[0.02] backdrop-blur-md outline-none transition-all resize-none text-sm"
+                placeholder="Optional reasoning..."
               />
               {errors.could_cause_harm && <p className="text-sm text-red-500">{errors.could_cause_harm.message}</p>}
             </div>
@@ -395,6 +417,42 @@ export function AnnotateClient({ sample, assignment, existingDraft, userRole, ne
                 {...register("rewrite_response")}
                 rows={4}
                 className="block w-full rounded-xl border border-white/10 bg-black/20 py-2.5 px-3 text-white placeholder:text-neutral-500 focus:border-white/30 focus:bg-white/[0.02] focus:outline-none focus:ring-0 sm:text-sm sm:leading-6 backdrop-blur-md transition-colors"
+              />
+            </div>
+
+            {/* Appropriateness Score */}
+            <div className="mt-8 p-6 bg-white/[0.02] backdrop-blur-xl border border-white/[0.08] rounded-2xl shadow-2xl space-y-4">
+              <label className="text-base font-semibold text-white block text-center mb-2">
+                On a scale of 1 to 10, how appropriate is this response?
+              </label>
+              <Controller
+                name="appropriateness_score"
+                control={control}
+                render={({ field }) => (
+                  <div>
+                    <div className="flex justify-between gap-1 sm:gap-2">
+                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                        <button
+                          key={num}
+                          type="button"
+                          onClick={() => field.onChange(num)}
+                          className={cn(
+                            "flex-1 rounded-xl border py-2 sm:py-3 text-sm font-bold transition-colors shadow-sm",
+                            field.value === num
+                              ? "bg-white border-white text-black"
+                              : "border-white/10 bg-white/5 text-neutral-400 hover:bg-white/10 hover:text-white"
+                          )}
+                        >
+                          {num}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="flex justify-between mt-3 text-xs text-neutral-500 font-medium px-1">
+                      <span>1 - Completely Inappropriate</span>
+                      <span>10 - Perfectly Appropriate</span>
+                    </div>
+                  </div>
+                )}
               />
             </div>
             </fieldset>

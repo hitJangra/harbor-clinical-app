@@ -30,13 +30,17 @@ export async function submitAnnotation(sampleId: string, data: AnnotationFormDat
       sample_id: sampleId,
       therapist_id: user.id,
       is_appropriate: data.is_appropriate,
+      q1_reason: data.q1_reason,
       send_without_modifications: data.send_without_modifications,
+      q2_reason: data.q2_reason,
       could_cause_harm: data.could_cause_harm,
+      q3_reason: data.q3_reason,
       validates_without_evidence: data.validates_without_evidence,
       cognitive_distortions: data.cognitive_distortions,
       reasoning: data.reasoning,
       suggested_improvement: data.suggested_improvement,
       rewrite_response: data.rewrite_response,
+      appropriateness_score: data.appropriateness_score,
       is_draft: isDraft,
       status: newStatus // <--- Added this so the dashboard map works!
     }, {
