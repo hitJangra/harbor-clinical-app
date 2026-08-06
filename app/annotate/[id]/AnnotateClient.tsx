@@ -30,6 +30,7 @@ const DISTORTIONS = [
   "Other"
 ];
 
+// Added userRole to the props
 interface AnnotateClientProps {
   sample: {
     id: string;
@@ -41,13 +42,18 @@ interface AnnotateClientProps {
     status: string;
   };
   existingDraft: Partial<AnnotationFormData> | null;
+  userRole: string; 
 }
 
-export function AnnotateClient({ sample, assignment, existingDraft }: AnnotateClientProps) {
+export function AnnotateClient({ sample, assignment, existingDraft, userRole }: AnnotateClientProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const router = useRouter();
+  
   const isCompleted = assignment.status === 'completed';
+  
+  // THE MAGIC LOCK: Only lock the form if it's completed AND the user is not an admin
+  const isViewOnly = isCompleted && userRole !== 'admin';
 
   const {
     register,
@@ -86,7 +92,6 @@ export function AnnotateClient({ sample, assignment, existingDraft }: AnnotateCl
   const handleSaveDraft = async () => {
     setIsSubmitting(true);
     setErrorMsg(null);
-    // Cast to any to bypass strict validation for drafts
     const data = watch() as unknown as AnnotationFormData;
     const result = await submitAnnotation(sample.id, data, true);
     if (!result.success) {
@@ -122,7 +127,7 @@ export function AnnotateClient({ sample, assignment, existingDraft }: AnnotateCl
       {/* Main Split Content */}
       <main className="flex min-h-0 flex-1 overflow-hidden">
         
-        {/* Left Panel: Context & LLM Response */}
+        {/* Left Panel */}
         <div className="flex w-1/2 flex-col overflow-y-auto border-r border-stone-200 bg-[#F8F9FA] p-6">
           <div className="flex flex-col space-y-6 rounded-xl border border-stone-200 bg-white p-6 shadow-sm">
             <div>
@@ -150,7 +155,8 @@ export function AnnotateClient({ sample, assignment, existingDraft }: AnnotateCl
         {/* Right Panel: Questionnaire */}
         <div className="flex w-1/2 flex-col overflow-y-auto bg-white">
           <form id="annotation-form" onSubmit={handleSubmit(onSubmit)} className="flex-1 p-8 space-y-8">
-            <fieldset disabled={isCompleted} className="space-y-8 disabled:opacity-75 border-none p-0 m-0">
+            {/* THIS FIELDSET LOCKS THE ENTIRE FORM IF isViewOnly is true */}
+            <fieldset disabled={isViewOnly} className="space-y-8 disabled:opacity-75 border-none p-0 m-0">
             
             {errorMsg && (
               <div className="p-4 bg-red-50 text-red-700 rounded-md text-sm mb-4">
@@ -269,7 +275,7 @@ export function AnnotateClient({ sample, assignment, existingDraft }: AnnotateCl
             {/* Q4 */}
             <div className="space-y-3">
               <label className="text-base font-medium text-stone-900">
-                4. Does it validate the user&apos;s belief without sufficient evidence? <span className="text-red-500">*</span>
+                4. Does it validate the user's belief without sufficient evidence? <span className="text-red-500">*</span>
               </label>
               <Controller
                 name="validates_without_evidence"
@@ -396,7 +402,9 @@ export function AnnotateClient({ sample, assignment, existingDraft }: AnnotateCl
             <ChevronLeft size={16} />
             <span>Dashboard</span>
           </Link>
-          {!isCompleted && (
+          
+          {/* Only show Save Draft if it's not locked */}
+          {!isViewOnly && (
             <button 
               type="button"
               disabled={isSubmitting}
@@ -412,10 +420,10 @@ export function AnnotateClient({ sample, assignment, existingDraft }: AnnotateCl
         <button
           type="submit"
           form="annotation-form"
-          disabled={isSubmitting || isCompleted}
+          disabled={isSubmitting || isViewOnly}
           className="flex items-center space-x-2 rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-500 disabled:opacity-50 transition-colors"
         >
-          <span>{isCompleted ? "Completed" : isSubmitting ? "Saving..." : "Submit and finish"}</span>
+          <span>{isViewOnly ? "View Only" : isSubmitting ? "Saving..." : "Submit and finish"}</span>
           <ChevronRight size={16} />
         </button>
       </footer>

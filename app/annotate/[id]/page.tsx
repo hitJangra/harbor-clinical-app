@@ -12,6 +12,15 @@ export default async function AnnotatePage({ params }: { params: { id: string } 
 
   const sampleId = params.id;
 
+  // 1. Fetch user profile to check if they are an admin
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+    
+  const userRole = profile?.role || 'therapist';
+
   // Fetch the sample directly
   const { data: sampleData, error: sampleError } = await supabase
     .from('samples')
@@ -27,14 +36,15 @@ export default async function AnnotatePage({ params }: { params: { id: string } 
     );
   }
 
-  // Fetch existing draft if any
-  const { data: existingDraft } = await supabase
+  // 2. Fetch ANY existing draft globally (Removed the user.id check!)
+  // Using limit(1) instead of single() just in case two people clicked at the exact same time before this update
+  const { data: existingDrafts } = await supabase
     .from('annotations')
     .select('*')
     .eq('sample_id', sampleId)
-    .eq('therapist_id', user.id)
-    .single();
+    .limit(1);
 
+  const existingDraft = existingDrafts?.[0] || null;
   const status = existingDraft?.status || 'not started';
 
   return (
@@ -42,6 +52,7 @@ export default async function AnnotatePage({ params }: { params: { id: string } 
       sample={sampleData as { id: string; source: string; context: string; gold_response: string }} 
       assignment={{ status }} 
       existingDraft={existingDraft} 
+      userRole={userRole}
     />
   );
 }

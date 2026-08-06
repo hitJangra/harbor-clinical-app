@@ -29,19 +29,24 @@ export default async function DashboardPage() {
 
   const safeSamples = allSamples || [];
 
-  // Fetch annotations by the current user
-  const { data: userAnnotations } = await supabase
+  // Fetch ALL annotations globally (Removed the user.id filter!)
+  const { data: globalAnnotations } = await supabase
     .from('annotations')
-    .select('sample_id, status')
-    .eq('therapist_id', user.id);
+    .select('sample_id, status');
 
-  const safeAnnotations = userAnnotations || [];
+  const safeAnnotations = globalAnnotations || [];
 
-  // Map annotations for quick lookup
-  const annotationMap = new Map(safeAnnotations.map(a => [a.sample_id, a.status]));
+  // Map annotations for quick lookup (Smart check: if ANY therapist completed it, lock it)
+  const annotationMap = new Map();
+  safeAnnotations.forEach(a => {
+    if (annotationMap.get(a.sample_id) !== 'completed') {
+      annotationMap.set(a.sample_id, a.status);
+    }
+  });
 
   const totalSamples = safeSamples.length;
-  const completedCount = safeAnnotations.filter(a => a.status === 'completed').length;
+  // Calculate completed based on the unique samples in our map
+  const completedCount = Array.from(annotationMap.values()).filter(status => status === 'completed').length;
   const remainingCount = totalSamples - completedCount;
 
   const userName = profile?.full_name || 'Therapist';
@@ -69,11 +74,11 @@ export default async function DashboardPage() {
             <dd className="mt-2 text-3xl font-semibold tracking-tight text-stone-900">{totalSamples}</dd>
           </div>
           <div className="overflow-hidden rounded-xl bg-white px-6 py-5 shadow-sm border border-stone-200">
-            <dt className="truncate text-sm font-medium text-stone-500">Completed by You</dt>
+            <dt className="truncate text-sm font-medium text-stone-500">Global Completed</dt>
             <dd className="mt-2 text-3xl font-semibold tracking-tight text-teal-600">{completedCount}</dd>
           </div>
           <div className="overflow-hidden rounded-xl bg-white px-6 py-5 shadow-sm border border-stone-200">
-            <dt className="truncate text-sm font-medium text-stone-500">Remaining for You</dt>
+            <dt className="truncate text-sm font-medium text-stone-500">Global Remaining</dt>
             <dd className="mt-2 text-3xl font-semibold tracking-tight text-stone-900">{remainingCount}</dd>
           </div>
         </div>

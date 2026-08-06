@@ -20,7 +20,10 @@ export async function submitAnnotation(sampleId: string, data: AnnotationFormDat
     }
   }
 
-  // Upsert the annotation
+  // Set the status perfectly so the Dashboard UI catches it
+  const newStatus = isDraft ? 'draft' : 'completed';
+
+  // Upsert the annotation directly into the Global Pool
   const { error: upsertError } = await supabase
     .from('annotations')
     .upsert({
@@ -34,7 +37,8 @@ export async function submitAnnotation(sampleId: string, data: AnnotationFormDat
       reasoning: data.reasoning,
       suggested_improvement: data.suggested_improvement,
       rewrite_response: data.rewrite_response,
-      is_draft: isDraft
+      is_draft: isDraft,
+      status: newStatus // <--- Added this so the dashboard map works!
     }, {
       onConflict: 'sample_id, therapist_id'
     });
@@ -44,20 +48,9 @@ export async function submitAnnotation(sampleId: string, data: AnnotationFormDat
     return { success: false, error: upsertError.message };
   }
 
-  // Update assignment status
-  const newStatus = isDraft ? 'in progress' : 'completed';
-  
-  const { error: updateError } = await supabase
-    .from('sample_assignments')
-    .update({ status: newStatus })
-    .eq('sample_id', sampleId)
-    .eq('therapist_id', user.id);
+  // (Removed the old sample_assignments update logic completely!)
 
-  if (updateError) {
-    console.error('Update Assignment Error:', updateError);
-    return { success: false, error: updateError.message };
-  }
-
+  // Revalidate the routes so the dashboard updates instantly
   revalidatePath('/dashboard');
   revalidatePath(`/annotate/${sampleId}`);
 
